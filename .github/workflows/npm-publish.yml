@@ -1,44 +1,33 @@
-# This workflow will run tests using node and then publish a package to GitHub Packages when a release is created
-# For more information see: https://docs.github.com/en/actions/publishing-packages/publishing-nodejs-packages
-
-name: Node.js Package
+name: Publish Package
 
 on:
-  release:
-    types: [created]
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  id-token: write  # Required for OIDC
+  contents: write
 
 jobs:
-  build:
+  publish:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
-      - uses: actions/setup-node@v5
-        with:
-          node-version: 22
-      - run: npm install
-      - run: npm test
+      - uses: actions/checkout@v6
 
-  publish-npm:
-    needs: build
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-      id-token: write
-    steps:
-      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v6
         with:
-          ref: main
-      - uses: actions/setup-node@v5
-        with:
-          node-version: 22
-          registry-url: https://registry.npmjs.org/
-      - run: npm install
+          node-version: '24'
+          registry-url: 'https://registry.npmjs.org'
+      - run: npm ci
+      - run: npm run build --if-present
+      - run: npm test
       - name: Set version from release tag
         run: npm version "${GITHUB_REF_NAME#v}" --no-git-tag-version
-      - run: npm publish --provenance --access public
+      - run: npm publish
       - name: Commit updated version to main
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add package.json
-          git diff --staged --quiet || (git commit -m "chore: bump version to ${GITHUB_REF_NAME#v}" && git push)
+          git diff --staged --quiet || (git commit -m "chore: bump version to ${GITHUB_REF_NAME#v}" && git push origin HEAD:main)
