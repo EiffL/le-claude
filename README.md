@@ -2,7 +2,7 @@
 
 Use [Claude Code](https://docs.anthropic.com/en/docs/claude-code) with France's [Albert API](https://albert.sites.beta.gouv.fr/) — the government-approved LLM service.
 
-One command. Zero config after first run.
+One command. Zero config after first run. Complete privacy.
 
 ```bash
 npx le-claude
