@@ -1,6 +1,6 @@
 # albert-claude
 
-Use [Claude Code](https://docs.anthropic.com/en/docs/claude-code) with France's [Albert API](https://albert.api.etalab.gouv.fr) — the government-approved LLM service.
+Use [Claude Code](https://docs.anthropic.com/en/docs/claude-code) with France's [Albert API](https://albert.sites.beta.gouv.fr/) — the government-approved LLM service.
 
 One command. Zero config after first run.
 
@@ -30,12 +30,11 @@ It works by running a lightweight local translation proxy that converts between 
 
 ## Getting an Albert API key
 
-Albert is available to French public administration employees.
+Albert is available to French state public servants (agents de la fonction publique d'État).
 
-1. Go to [albert.api.etalab.gouv.fr](https://albert.api.etalab.gouv.fr)
-2. Create an account with your government email address
-3. Once logged in, navigate to your account settings to generate an API key
-4. Keep this key safe — you'll need it during setup
+1. [Request access](https://albert.sites.beta.gouv.fr/access/) on the Albert website — you will receive your credentials by email within 24 hours
+2. Once you have your credentials, log in to the [Albert playground](https://albert.playground.etalab.gouv.fr/) to generate an API key
+3. Keep this key safe — you'll need it during setup
 
 > If you're unsure about access, contact your organization's IT department or refer to the [DINUM documentation](https://www.numerique.gouv.fr/).
 
