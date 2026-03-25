@@ -1,16 +1,16 @@
-# albert-claude
+# le-claude
 
 Use [Claude Code](https://docs.anthropic.com/en/docs/claude-code) with France's [Albert API](https://albert.sites.beta.gouv.fr/) — the government-approved LLM service.
 
 One command. Zero config after first run.
 
 ```bash
-npx albert-claude
+npx le-claude
 ```
 
 ## What is this?
 
-Claude Code is Anthropic's AI coding assistant that runs in your terminal. It normally requires an Anthropic API subscription. **albert-claude** lets you use Claude Code with Albert, the French government's LLM platform operated by [DINUM/Etalab](https://www.numerique.gouv.fr/dinum/), instead.
+Claude Code is Anthropic's AI coding assistant that runs in your terminal. It normally requires an Anthropic API subscription. **le-claude** lets you use Claude Code with Albert, the French government's LLM platform operated by [DINUM/Etalab](https://www.numerique.gouv.fr/dinum/), instead.
 
 It works by running a lightweight local translation proxy that converts between the Anthropic API format (which Claude Code speaks) and the OpenAI-compatible API format (which Albert speaks). Everything runs on your machine — no data is sent anywhere except directly to the Albert API.
 
@@ -41,15 +41,15 @@ Albert is available to French state public servants (agents de la fonction publi
 ## Quick start
 
 ```bash
-npx albert-claude
+npx le-claude
 ```
 
-On first run, you'll be prompted for your API key and asked to choose a model. Configuration is saved to `~/.config/albert-claude/config.json` for subsequent runs.
+On first run, you'll be prompted for your API key and asked to choose a model. Configuration is saved to `~/.config/le-claude/config.json` for subsequent runs.
 
 ```
-$ npx albert-claude
+$ npx le-claude
 
-  albert-claude - Use Claude Code with Albert API
+  le-claude - Use Claude Code with Albert API
 
   No configuration found. Let's set things up!
 
@@ -60,7 +60,7 @@ $ npx albert-claude
     1. openai/gpt-oss-120b (text-generation)
   Select model [1]: 1
 
-  Configuration saved to ~/.config/albert-claude/config.json
+  Configuration saved to ~/.config/le-claude/config.json
 
   Starting proxy... ok (port 52341)
   Launching Claude Code...
@@ -69,35 +69,35 @@ $ npx albert-claude
 Every subsequent run just works:
 
 ```bash
-npx albert-claude
+npx le-claude
 ```
 
 ### Make it a single command
 
-Add an alias to your shell config so you can just type `albert-claude`:
+Add an alias to your shell config so you can just type `le-claude`:
 
 ```bash
 # Add to ~/.bashrc or ~/.zshrc:
-alias albert-claude="npx albert-claude"
+alias le-claude="npx le-claude"
 ```
 
 Then reload your shell (`source ~/.zshrc`) and from now on:
 
 ```bash
-albert-claude
+le-claude
 ```
 
 Alternatively, install globally to skip npx entirely:
 
 ```bash
-npm install -g albert-claude
-albert-claude
+npm install -g le-claude
+le-claude
 ```
 
 ## Options
 
 ```
-npx albert-claude [options] [-- claude-args...]
+npx le-claude [options] [-- claude-args...]
 
 Options:
   --setup         Re-run interactive setup (change API key or model)
@@ -109,10 +109,10 @@ Options:
 Examples:
 
 ```bash
-npx albert-claude --debug                    # See request/response details
-npx albert-claude --model openai/gpt-oss-40b # Use a different model
-npx albert-claude --setup                    # Change API key or model
-npx albert-claude -- -p "Fix the bug"        # Pass arguments to Claude Code
+npx le-claude --debug                    # See request/response details
+npx le-claude --model openai/gpt-oss-40b # Use a different model
+npx le-claude --setup                    # Change API key or model
+npx le-claude -- -p "Fix the bug"        # Pass arguments to Claude Code
 ```
 
 ## How it works
@@ -122,7 +122,7 @@ Claude Code  ──[Anthropic API]──▶  Local proxy (127.0.0.1)  ──[Ope
              ◀─────────────────  (translates between formats)  ◀──────────────
 ```
 
-albert-claude starts a translation proxy on a random localhost port, then launches Claude Code pointed at it. The proxy translates:
+le-claude starts a translation proxy on a random localhost port, then launches Claude Code pointed at it. The proxy translates:
 
 - **Requests**: Anthropic Messages format → OpenAI Chat Completions format
 - **Responses**: OpenAI format → Anthropic format (including streaming SSE)
@@ -135,7 +135,7 @@ When Claude Code exits, the proxy stops automatically.
 - **Localhost only** — the proxy binds to `127.0.0.1`, never exposed to the network
 - **No data logging** — message content and API keys are never logged (even in debug mode, content is truncated)
 - **Zero dependencies** — no npm packages, no supply chain risk. Pure Node.js builtins
-- **Your API key** is stored in `~/.config/albert-claude/config.json` with `600` permissions (owner-only read)
+- **Your API key** is stored in `~/.config/le-claude/config.json` with `600` permissions (owner-only read)
 - **Direct connection** — your data goes from your machine straight to Albert's API. Nothing in between
 
 ## Important notes

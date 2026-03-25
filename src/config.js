@@ -1,7 +1,7 @@
 /**
- * Configuration management for albert-claude.
+ * Configuration management for le-claude.
  *
- * Stores config in ~/.config/albert-claude/config.json
+ * Stores config in ~/.config/le-claude/config.json
  */
 
 import fs from 'node:fs';
@@ -12,7 +12,7 @@ const DEFAULT_BASE_URL = 'https://albert.api.etalab.gouv.fr/v1';
 
 function configDir() {
   const xdg = process.env.XDG_CONFIG_HOME || path.join(process.env.HOME, '.config');
-  return path.join(xdg, 'albert-claude');
+  return path.join(xdg, 'le-claude');
 }
 
 function configPath() {
@@ -70,7 +70,7 @@ export async function interactiveSetup(existingConfig = null) {
 
   try {
     console.error('');
-    console.error('  albert-claude - Use Claude Code with Albert API');
+    console.error('  le-claude - Use Claude Code with Albert API');
     console.error('');
 
     if (!existingConfig) {

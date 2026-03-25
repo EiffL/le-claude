@@ -4,14 +4,14 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-albert-claude is a local HTTP proxy that translates between Anthropic's Messages API format (used by Claude Code) and OpenAI-compatible Chat Completions format (used by France's Albert API). It has **zero npm dependencies** — only Node.js builtins (>=18).
+le-claude is a local HTTP proxy that translates between Anthropic's Messages API format (used by Claude Code) and OpenAI-compatible Chat Completions format (used by France's Albert API). It has **zero npm dependencies** — only Node.js builtins (>=18).
 
 ## Commands
 
 - **Run tests:** `npm test`
 - **Run a single test file:** `node --test test/test-translate.js`
 - **Run a single named test:** `node --test --test-name-pattern="pattern" test/test-translate.js`
-- **Run locally:** `node bin/albert-claude` (requires prior `--setup` for API key config)
+- **Run locally:** `node bin/le-claude` (requires prior `--setup` for API key config)
 
 ## Architecture
 
@@ -24,7 +24,7 @@ Claude Code → POST /v1/messages → proxy (127.0.0.1:random) → POST /v1/chat
 **Key modules in `src/`:**
 
 - **cli.js** — Entry point. Parses args, loads config, starts proxy, spawns Claude Code as child process with `ANTHROPIC_BASE_URL` pointing to the local proxy, handles shutdown signals.
-- **config.js** — Reads/writes `~/.config/albert-claude/config.json` (API key, model, base URL). Interactive setup flow fetches available models from Albert.
+- **config.js** — Reads/writes `~/.config/le-claude/config.json` (API key, model, base URL). Interactive setup flow fetches available models from Albert.
 - **proxy.js** — HTTP server on localhost. Handles `/v1/messages` (main proxy) and `/v1/messages/count_tokens` (stub). Supports both streaming and non-streaming responses.
 - **translate.js** — Pure functions for format conversion. Request: Anthropic content blocks → OpenAI messages, tool definitions, tool_choice. Response: OpenAI completion → Anthropic message format. Strips thinking blocks, filters BatchTool, removes `format: "uri"` from schemas.
 - **stream.js** — `StreamTranslator` class: stateful translator that processes OpenAI SSE chunks incrementally and emits Anthropic SSE events. Tracks content block indices and accumulates tool call arguments across chunks.

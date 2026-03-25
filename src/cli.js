@@ -1,5 +1,5 @@
 /**
- * CLI entry point for albert-claude.
+ * CLI entry point for le-claude.
  *
  * Orchestrates: config → proxy → claude code → cleanup.
  */
@@ -29,10 +29,10 @@ function parseArgs() {
 
 function printHelp() {
   console.error(`
-  albert-claude - Use Claude Code with France's Albert API
+  le-claude - Use Claude Code with France's Albert API
 
   Usage:
-    npx albert-claude [options] [-- claude-args...]
+    npx le-claude [options] [-- claude-args...]
 
   Options:
     --setup         Re-run interactive setup
@@ -41,12 +41,12 @@ function printHelp() {
     -h, --help      Show this help message
 
   Examples:
-    npx albert-claude                  Start Claude Code with Albert
-    npx albert-claude --debug          Start with debug logging
-    npx albert-claude --model gpt-4o   Use a specific model
-    npx albert-claude -- --help        Pass --help to Claude Code
+    npx le-claude                  Start Claude Code with Albert
+    npx le-claude --debug          Start with debug logging
+    npx le-claude --model gpt-4o   Use a specific model
+    npx le-claude -- --help        Pass --help to Claude Code
 
-  Configuration is stored in ~/.config/albert-claude/config.json
+  Configuration is stored in ~/.config/le-claude/config.json
   `);
 }
 
@@ -108,7 +108,7 @@ async function main() {
   const claudeEnv = {
     ...process.env,
     ANTHROPIC_BASE_URL: `http://127.0.0.1:${port}`,
-    ANTHROPIC_AUTH_TOKEN: 'albert-claude',
+    ANTHROPIC_AUTH_TOKEN: 'le-claude',
     ANTHROPIC_API_KEY: '',
     ANTHROPIC_CUSTOM_MODEL_OPTION: model,
     ANTHROPIC_CUSTOM_MODEL_OPTION_NAME: `Albert ${model}`,
