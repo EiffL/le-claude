@@ -1,5 +1,10 @@
 # le-claude
 
+[![npm version](https://img.shields.io/npm/v/le-claude)](https://www.npmjs.com/package/le-claude)
+[![node](https://img.shields.io/node/v/le-claude)](https://nodejs.org)
+[![zero dependencies](https://img.shields.io/badge/dependencies-0-brightgreen)](https://www.npmjs.com/package/le-claude?activeTab=dependencies)
+[![license](https://img.shields.io/npm/l/le-claude)](./LICENSE)
+
 Use [Claude Code](https://docs.anthropic.com/en/docs/claude-code) with France's [Albert API](https://albert.sites.beta.gouv.fr/) — the government-approved LLM service.
 
 One command. Zero config after first run. Complete privacy.
@@ -16,7 +21,7 @@ It works by running a lightweight local translation proxy that converts between 
 
 ## Prerequisites
 
-1. **Node.js 18+** — required to run the proxy
+1. **Node.js 22+** — required to run the proxy
 2. **Claude Code** — install with:
    ```bash
    # macOS / Linux

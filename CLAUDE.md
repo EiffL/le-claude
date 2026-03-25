@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-le-claude is a local HTTP proxy that translates between Anthropic's Messages API format (used by Claude Code) and OpenAI-compatible Chat Completions format (used by France's Albert API). It has **zero npm dependencies** — only Node.js builtins (>=18).
+le-claude is a local HTTP proxy that translates between Anthropic's Messages API format (used by Claude Code) and OpenAI-compatible Chat Completions format (used by France's Albert API). It has **zero npm dependencies** — only Node.js builtins (>=22).
 
 ## Commands
 
