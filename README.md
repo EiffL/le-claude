@@ -72,6 +72,28 @@ Every subsequent run just works:
 npx albert-claude
 ```
 
+### Make it a single command
+
+Add an alias to your shell config so you can just type `albert`:
+
+```bash
+# Add to ~/.bashrc or ~/.zshrc:
+alias albert="npx albert-claude"
+```
+
+Then reload your shell (`source ~/.zshrc`) and from now on:
+
+```bash
+albert
+```
+
+Alternatively, install globally to skip npx entirely:
+
+```bash
+npm install -g albert-claude
+albert-claude
+```
+
 ## Options
 
 ```
