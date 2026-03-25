@@ -1,5 +1,9 @@
 # le-claude
 
+<p align="center">
+  <img src="assets/le-claude.png" alt="le-claude — a pixel art Claude crab wearing a beret and holding a baguette, with the Paris skyline in the background" width="600">
+</p>
+
 [![npm version](https://img.shields.io/npm/v/le-claude)](https://www.npmjs.com/package/le-claude)
 [![node](https://img.shields.io/node/v/le-claude)](https://nodejs.org)
 [![zero dependencies](https://img.shields.io/badge/dependencies-0-brightgreen)](https://www.npmjs.com/package/le-claude?activeTab=dependencies)
