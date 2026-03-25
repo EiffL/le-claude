@@ -29,5 +29,9 @@
     "france",
     "administration"
   ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/EiffL/albert-claude.git"
+  },
   "license": "MIT"
 }
