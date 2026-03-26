@@ -5,8 +5,9 @@
  */
 
 import { spawn, execFileSync } from 'node:child_process';
-import { loadConfig, interactiveSetup } from './config.js';
+import { loadConfig, interactiveSetup, fetchModels } from './config.js';
 import { startProxy } from './proxy.js';
+import readline from 'node:readline';
 
 // ---------------------------------------------------------------------------
 // Argument parsing
@@ -14,13 +15,13 @@ import { startProxy } from './proxy.js';
 
 function parseArgs() {
   const args = process.argv.slice(2);
-  const opts = { debug: false, model: null, setup: false, help: false, claudeArgs: [] };
+  const opts = { debug: false, model: false, setup: false, help: false, claudeArgs: [] };
   let i = 0;
   while (i < args.length) {
     if (args[i] === '--debug') { opts.debug = true; i++; }
     else if (args[i] === '--setup') { opts.setup = true; i++; }
     else if (args[i] === '--help' || args[i] === '-h') { opts.help = true; i++; }
-    else if (args[i] === '--model' && i + 1 < args.length) { opts.model = args[i + 1]; i += 2; }
+    else if (args[i] === '--model') { opts.model = true; i++; }
     else if (args[i] === '--') { opts.claudeArgs = args.slice(i + 1); break; }
     else { opts.claudeArgs = args.slice(i); break; }
   }
@@ -36,7 +37,7 @@ function printHelp() {
 
   Options:
     --setup         Re-run interactive setup
-    --model MODEL   Override the model for this session
+    --model         Use the first available model from the API for this session
     --debug         Enable proxy debug logging
     -h, --help      Show this help message
 
@@ -83,7 +84,24 @@ async function main() {
   }
 
   // CLI overrides
-  const model = opts.model || config.model;
+  let model;
+  if (opts.model) {
+    // Flag provided: fetch available models from the API and use the first one
+    try {
+      const models = await fetchModels(config.baseUrl, config.apiKey);
+      if (models.length > 0) {
+        model = models[0].id;
+      } else {
+        // Fallback to config model if API returns none
+        model = config.model;
+      }
+    } catch (e) {
+      console.error(`  Warning: failed to fetch models for --model flag: ${e.message}`);
+      model = config.model;
+    }
+  } else {
+    model = config.model;
+  }
 
   // Check claude is installed
   const claudeBin = findClaude();

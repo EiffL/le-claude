@@ -47,7 +47,7 @@ function ask(rl, question) {
 }
 
 /** Fetch available models from the Albert API. */
-async function fetchModels(baseUrl, apiKey) {
+export async function fetchModels(baseUrl, apiKey) {
   const headers = {};
   if (apiKey) headers['Authorization'] = `Bearer ${apiKey}`;
 
