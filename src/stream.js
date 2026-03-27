@@ -4,8 +4,7 @@
  * Direct port of the tested Python StreamTranslator class.
  */
 
-import { makeMsgId, mapStopReason, parseTextToolCalls, TOOL_CALL_TEXT_PREFIXES } from './translate.js';
-import crypto from 'node:crypto';
+import { makeMsgId, mapStopReason, parseTextToolCalls, TOOL_CALL_TEXT_PREFIXES, makeToolCallId } from './translate.js';
 
 /** Format a single SSE event. */
 export function formatSSE(event, data) {
@@ -118,7 +117,7 @@ export class StreamTranslator {
             index: ci,
             content_block: {
               type: 'tool_use',
-              id: tc.id || `call_${crypto.randomUUID().replace(/-/g, '').slice(0, 24)}`,
+              id: tc.id || makeToolCallId(),
               name: (tc.function || {}).name || '',
               input: {},
             },

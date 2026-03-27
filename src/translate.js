@@ -33,8 +33,12 @@ function extractJsonObject(text, startIdx) {
   return null;
 }
 
-function makeToolCallId() {
-  return `call_${crypto.randomUUID().replace(/-/g, '').slice(0, 24)}`;
+/** Generate a 9-character alphanumeric ID compatible with vLLM/Mistral backends. */
+export function makeToolCallId() {
+  const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+  const bytes = new Uint8Array(9);
+  crypto.getRandomValues(bytes);
+  return Array.from(bytes, b => chars[b % chars.length]).join('');
 }
 
 /**
@@ -349,7 +353,7 @@ function translateMessages(payload) {
           }
         } else if (btype === 'tool_use') {
           toolCalls.push({
-            id: block.id || `call_${crypto.randomUUID().replace(/-/g, '').slice(0, 24)}`,
+            id: block.id || makeToolCallId(),
             type: 'function',
             function: {
               name: block.name || '',
@@ -359,7 +363,7 @@ function translateMessages(payload) {
         } else if (btype === 'server_tool_use') {
           // Server tool use in history — treat like a regular tool call
           toolCalls.push({
-            id: block.id || `call_${crypto.randomUUID().replace(/-/g, '').slice(0, 24)}`,
+            id: block.id || makeToolCallId(),
             type: 'function',
             function: {
               name: block.name || '',
@@ -416,7 +420,8 @@ function translateMessages(payload) {
       }
     }
 
-    // Build main message
+    // Build main message — skip empty user messages that only contain tool_result
+    // blocks, since the results are emitted as separate tool messages below.
     const openaiMsg = { role };
     if (contentParts.length === 1 && contentParts[0].type === 'text') {
       openaiMsg.content = contentParts[0].text;
@@ -426,7 +431,9 @@ function translateMessages(payload) {
       openaiMsg.content = '';
     }
     if (toolCalls.length > 0) openaiMsg.tool_calls = toolCalls;
-    messages.push(openaiMsg);
+    if (contentParts.length > 0 || toolCalls.length > 0 || toolResults.length === 0) {
+      messages.push(openaiMsg);
+    }
 
     // Tool results as separate messages
     messages.push(...toolResults);
@@ -523,7 +530,7 @@ export function translateResponse(openaiData, model) {
     }
     content.push({
       type: 'tool_use',
-      id: tc.id || `call_${crypto.randomUUID().replace(/-/g, '').slice(0, 24)}`,
+      id: tc.id || makeToolCallId(),
       name: func.name || '',
       input: inputData,
     });

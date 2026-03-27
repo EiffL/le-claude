@@ -119,17 +119,17 @@ describe('translateRequest', () => {
     assert.deepEqual(JSON.parse(msg.tool_calls[0].function.arguments), { query: 'test' });
   });
 
-  it('translates tool_result to separate message', () => {
+  it('translates tool_result to tool message without empty user message', () => {
     const result = translateRequest({
       messages: [{
         role: 'user',
         content: [{ type: 'tool_result', tool_use_id: 'call_abc', content: 'found it' }],
       }],
     }, 'gpt-4');
-    assert.equal(result.messages.length, 2);
-    assert.equal(result.messages[1].role, 'tool');
-    assert.equal(result.messages[1].content, 'found it');
-    assert.equal(result.messages[1].tool_call_id, 'call_abc');
+    assert.equal(result.messages.length, 1);
+    assert.equal(result.messages[0].role, 'tool');
+    assert.equal(result.messages[0].content, 'found it');
+    assert.equal(result.messages[0].tool_call_id, 'call_abc');
   });
 
   it('prefixes error tool results', () => {
@@ -139,7 +139,7 @@ describe('translateRequest', () => {
         content: [{ type: 'tool_result', tool_use_id: 'x', content: 'not found', is_error: true }],
       }],
     }, 'gpt-4');
-    assert.equal(result.messages[1].content, 'Error: not found');
+    assert.equal(result.messages[0].content, 'Error: not found');
   });
 
   it('strips thinking blocks', () => {
