@@ -19,9 +19,9 @@ npx le-claude
 
 ## What is this?
 
-Claude Code is Anthropic's AI coding assistant that runs in your terminal. It normally requires an Anthropic API subscription. **le-claude** lets you use Claude Code with Albert, the French government's LLM platform operated by [DINUM/Etalab](https://www.numerique.gouv.fr/dinum/), instead.
+Claude Code is Anthropic's AI coding assistant that runs in your terminal. It normally requires an Anthropic API subscription. **le-claude** lets you use Claude Code with Albert, the French government's LLM platform operated by [DINUM/Etalab](https://www.numerique.gouv.fr/dinum/), or with the [ILaaS](https://ilaas.fr/) federation of inference platforms from French Universities.
 
-It works by running a lightweight local translation proxy that converts between the Anthropic API format (which Claude Code speaks) and the OpenAI-compatible API format (which Albert speaks). Everything runs on your machine — no data is sent anywhere except directly to the Albert API.
+It works by running a lightweight local translation proxy that converts between the Anthropic API format (which Claude Code speaks) and the OpenAI-compatible API format (which Albert and ILaaS speaks). Everything runs on your machine — no data is sent anywhere except directly to the Albert API.
 
 ## Prerequisites
 
@@ -142,7 +142,7 @@ npx le-claude -- -p "Fix the bug"          # Pass arguments to Claude Code
 ## How it works
 
 ```
-Claude Code  ──[Anthropic API]──▶  Local proxy (127.0.0.1)  ──[OpenAI API]──▶  Albert API
+Claude Code  ──[Anthropic API]──▶  Local proxy (127.0.0.1)  ──[OpenAI API]──▶  Albert/ILaaS API
              ◀─────────────────  (translates between formats)  ◀──────────────
 ```
 
