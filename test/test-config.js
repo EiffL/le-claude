@@ -68,34 +68,50 @@ describe('loadConfig', () => {
   });
 
   it('auto-migrates old flat config and writes new shape to disk', () => {
-    const dir = path.join(tmpDir, 'le-claude');
+    const dir = path.join(tmpDir, 'test-migrate');
     fs.mkdirSync(dir, { recursive: true });
-    fs.writeFileSync(
-      path.join(dir, 'config.json'),
-      JSON.stringify({ apiKey: 'sk-old', model: 'OldModel', baseUrl: 'https://albert.api.etalab.gouv.fr/v1', braveApiKey: '' }),
-    );
+    const cfgPath = path.join(dir, 'config.json');
+    const subXdg = fs.mkdtempSync(path.join(tmpDir, 'xdg-migrate-'));
+    const prevXdg = process.env.XDG_CONFIG_HOME;
+    process.env.XDG_CONFIG_HOME = subXdg;
+    try {
+      const subDir = path.join(subXdg, 'le-claude');
+      fs.mkdirSync(subDir, { recursive: true });
+      fs.writeFileSync(
+        path.join(subDir, 'config.json'),
+        JSON.stringify({ apiKey: 'sk-old', model: 'OldModel', baseUrl: 'https://albert.api.etalab.gouv.fr/v1', braveApiKey: '' }),
+      );
 
-    const config = loadConfig();
-    assert.equal(config.defaultProvider, 'albert');
-    assert.equal(config.providers.albert.apiKey, 'sk-old');
-    assert.equal(config.providers.albert.model, 'OldModel');
+      const config = loadConfig();
+      assert.equal(config.defaultProvider, 'albert');
+      assert.equal(config.providers.albert.apiKey, 'sk-old');
+      assert.equal(config.providers.albert.model, 'OldModel');
 
-    // Migration was written back to disk
-    const written = JSON.parse(fs.readFileSync(path.join(dir, 'config.json'), 'utf-8'));
-    assert.ok(written.providers, 'migrated config should have providers on disk');
-    assert.ok(!written.apiKey, 'old apiKey field should be gone');
+      const written = JSON.parse(fs.readFileSync(path.join(subDir, 'config.json'), 'utf-8'));
+      assert.ok(written.providers, 'migrated config should have providers on disk');
+      assert.ok(!written.apiKey, 'old apiKey field should be gone');
+    } finally {
+      process.env.XDG_CONFIG_HOME = prevXdg;
+    }
   });
 
   it('loads new multi-provider config without touching it', () => {
-    const config = {
-      defaultProvider: 'ilaas',
-      providers: {
-        ilaas: { baseUrl: 'https://llm.ilaas.fr/v1', apiKey: 'sk-ilaas', model: 'ILaaS-Model' },
-      },
-      braveApiKey: '',
-    };
-    saveConfig(config);
-    const loaded = loadConfig();
-    assert.deepEqual(loaded, config);
+    const subXdg = fs.mkdtempSync(path.join(tmpDir, 'xdg-load-'));
+    const prevXdg = process.env.XDG_CONFIG_HOME;
+    process.env.XDG_CONFIG_HOME = subXdg;
+    try {
+      const config = {
+        defaultProvider: 'ilaas',
+        providers: {
+          ilaas: { baseUrl: 'https://llm.ilaas.fr/v1', apiKey: 'sk-ilaas', model: 'ILaaS-Model' },
+        },
+        braveApiKey: '',
+      };
+      saveConfig(config);
+      const loaded = loadConfig();
+      assert.deepEqual(loaded, config);
+    } finally {
+      process.env.XDG_CONFIG_HOME = prevXdg;
+    }
   });
 });

@@ -42,15 +42,18 @@ function configPath() {
 
 /** Load saved config, or return null if none exists. Auto-migrates old flat shape. */
 export function loadConfig() {
+  let data;
   try {
-    const data = fs.readFileSync(configPath(), 'utf-8');
-    const raw = JSON.parse(data);
-    const config = migrateConfig(raw);
-    if (config !== raw) saveConfig(config);
-    return config;
+    data = fs.readFileSync(configPath(), 'utf-8');
   } catch {
     return null;
   }
+  const raw = JSON.parse(data);
+  const config = migrateConfig(raw);
+  if (config !== raw) {
+    try { saveConfig(config); } catch { /* best-effort write-back */ }
+  }
+  return config;
 }
 
 /** Save config to disk. */
