@@ -8,12 +8,12 @@ import fs from 'node:fs';
 import path from 'node:path';
 import readline from 'node:readline';
 
-const DEFAULT_BASE_URL = 'https://albert.api.etalab.gouv.fr/v1';
-
 const PROVIDER_BASE_URLS = {
   albert: 'https://albert.api.etalab.gouv.fr/v1',
   ilaas: 'https://llm.ilaas.fr/v1',
 };
+
+const DEFAULT_BASE_URL = PROVIDER_BASE_URLS.albert;
 
 /** Migrate old flat config to multi-provider shape. Returns same ref if already new shape. */
 export function migrateConfig(config) {
