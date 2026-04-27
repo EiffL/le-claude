@@ -73,7 +73,7 @@ function ask(rl, question) {
   return new Promise(resolve => rl.question(question, resolve));
 }
 
-/** Fetch available models from the Albert API. */
+/** Fetch available models from the provider API. Falls back to all models if filter yields none. */
 export async function fetchModels(baseUrl, apiKey) {
   const headers = {};
   if (apiKey) headers['Authorization'] = `Bearer ${apiKey}`;
@@ -82,10 +82,9 @@ export async function fetchModels(baseUrl, apiKey) {
   if (!res.ok) throw new Error(`API returned ${res.status}`);
   const data = await res.json();
 
-  // Filter to text-generation models and instruct models, sort by name
-  return (data.data || [])
-    .filter(m => m.type === 'text-generation' || m.id?.includes('Instruct'))
-    .sort((a, b) => (a.id || '').localeCompare(b.id || ''));
+  const all = (data.data || []).sort((a, b) => (a.id || '').localeCompare(b.id || ''));
+  const filtered = all.filter(m => m.type === 'text-generation' || m.id?.includes('Instruct'));
+  return filtered.length > 0 ? filtered : all;
 }
 
 /** Interactive model picker. Shows available models and returns chosen ID. */

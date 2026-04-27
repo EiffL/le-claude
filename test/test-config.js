@@ -115,3 +115,48 @@ describe('loadConfig', () => {
     }
   });
 });
+
+describe('fetchModels', () => {
+  it('returns filtered models when filter matches', async () => {
+    const origFetch = globalThis.fetch;
+    globalThis.fetch = async () => ({
+      ok: true,
+      json: async () => ({
+        data: [
+          { id: 'Text-Instruct-7B', type: 'other' },
+          { id: 'embed-model', type: 'text-embeddings-inference' },
+          { id: 'chat-gen', type: 'text-generation' },
+        ],
+      }),
+    });
+    try {
+      const models = await fetchModels('https://example.com/v1', 'key');
+      assert.equal(models.length, 2);
+      assert.ok(models.some(m => m.id === 'Text-Instruct-7B'));
+      assert.ok(models.some(m => m.id === 'chat-gen'));
+    } finally {
+      globalThis.fetch = origFetch;
+    }
+  });
+
+  it('falls back to all models when filter yields empty', async () => {
+    const origFetch = globalThis.fetch;
+    globalThis.fetch = async () => ({
+      ok: true,
+      json: async () => ({
+        data: [
+          { id: 'embed-model', type: 'text-embeddings-inference' },
+          { id: 'rerank-model', type: 'reranking' },
+        ],
+      }),
+    });
+    try {
+      const models = await fetchModels('https://example.com/v1', 'key');
+      assert.equal(models.length, 2);
+      assert.ok(models.some(m => m.id === 'embed-model'));
+      assert.ok(models.some(m => m.id === 'rerank-model'));
+    } finally {
+      globalThis.fetch = origFetch;
+    }
+  });
+});
