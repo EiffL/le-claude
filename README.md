@@ -9,7 +9,7 @@
 [![zero dependencies](https://img.shields.io/badge/dependencies-0-brightgreen)](https://www.npmjs.com/package/le-claude?activeTab=dependencies)
 [![license](https://img.shields.io/npm/l/le-claude)](./LICENSE)
 
-Use [Claude Code](https://docs.anthropic.com/en/docs/claude-code) with France's [Albert API](https://albert.sites.beta.gouv.fr/) — the government-approved LLM service.
+Use [Claude Code](https://docs.anthropic.com/en/docs/claude-code) with France's government LLM services — [Albert API](https://albert.sites.beta.gouv.fr/) and [ILaaS](https://www.ilaas.fr/).
 
 One command. Zero config after first run. Complete privacy.
 
@@ -35,9 +35,11 @@ It works by running a lightweight local translation proxy that converts between 
    brew install --cask claude-code
    ```
    Verify with `claude --version`. See [full install docs](https://docs.anthropic.com/en/docs/claude-code).
-3. **An Albert API key** — see below
+3. **An API key** — for Albert or ILaaS (see below)
 
-## Getting an Albert API key
+## Getting API access
+
+### Albert
 
 Albert is available to French state public servants (agents de la fonction publique d'État).
 
@@ -46,6 +48,14 @@ Albert is available to French state public servants (agents de la fonction publi
 3. Keep this key safe — you'll need it during setup
 
 > If you're unsure about access, contact your organization's IT department or refer to the [DINUM documentation](https://www.numerique.gouv.fr/).
+
+### ILaaS
+
+ILaaS (Infrastructure LLM as a Service) is an OpenAI-compatible LLM platform.
+
+1. [Request access](https://www.ilaas.fr/demande-dacces/) on the ILaaS website
+2. Once approved, retrieve your API key from the ILaaS portal
+3. Keep this key safe — you'll need it during setup
 
 ## Quick start
 
@@ -109,19 +119,24 @@ le-claude
 npx le-claude [options] [-- claude-args...]
 
 Options:
-  --setup         Configure le-claude (API key and/or default model)
-  --model         Choose which model to use for this session
-  --debug         Enable proxy debug logging
-  -h, --help      Show help
+  --provider <name>   Use a specific provider for this session (albert or ilaas)
+  --setup             Configure a provider (API key and/or default model)
+  --model             Choose which model to use for this session
+  --debug             Enable proxy debug logging
+  -h, --help          Show help
 ```
 
 Examples:
 
 ```bash
-npx le-claude --debug                    # See request/response details
-npx le-claude --model                    # Choose a model for this session
-npx le-claude --setup                    # Change API key or default model
-npx le-claude -- -p "Fix the bug"        # Pass arguments to Claude Code
+npx le-claude                              # Start (picks provider if multiple configured)
+npx le-claude --provider albert            # Use Albert for this session
+npx le-claude --provider ilaas             # Use ILaaS for this session
+npx le-claude --setup                      # Configure a provider
+npx le-claude --setup --provider ilaas     # Set up ILaaS (add or reconfigure)
+npx le-claude --debug                      # See request/response details
+npx le-claude --model                      # Choose a model for this session
+npx le-claude -- -p "Fix the bug"          # Pass arguments to Claude Code
 ```
 
 ## How it works
