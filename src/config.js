@@ -40,11 +40,14 @@ function configPath() {
   return path.join(configDir(), 'config.json');
 }
 
-/** Load saved config, or return null if none exists. */
+/** Load saved config, or return null if none exists. Auto-migrates old flat shape. */
 export function loadConfig() {
   try {
     const data = fs.readFileSync(configPath(), 'utf-8');
-    return JSON.parse(data);
+    const raw = JSON.parse(data);
+    const config = migrateConfig(raw);
+    if (config !== raw) saveConfig(config);
+    return config;
   } catch {
     return null;
   }

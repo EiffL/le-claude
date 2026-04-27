@@ -47,3 +47,55 @@ describe('migrateConfig', () => {
     assert.strictEqual(migrateConfig(null), null);
   });
 });
+
+describe('loadConfig', () => {
+  let tmpDir;
+  const origXdg = process.env.XDG_CONFIG_HOME;
+
+  before(() => {
+    tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'le-claude-test-'));
+    process.env.XDG_CONFIG_HOME = tmpDir;
+  });
+
+  after(() => {
+    fs.rmSync(tmpDir, { recursive: true });
+    if (origXdg === undefined) delete process.env.XDG_CONFIG_HOME;
+    else process.env.XDG_CONFIG_HOME = origXdg;
+  });
+
+  it('returns null when no config file exists', () => {
+    assert.strictEqual(loadConfig(), null);
+  });
+
+  it('auto-migrates old flat config and writes new shape to disk', () => {
+    const dir = path.join(tmpDir, 'le-claude');
+    fs.mkdirSync(dir, { recursive: true });
+    fs.writeFileSync(
+      path.join(dir, 'config.json'),
+      JSON.stringify({ apiKey: 'sk-old', model: 'OldModel', baseUrl: 'https://albert.api.etalab.gouv.fr/v1', braveApiKey: '' }),
+    );
+
+    const config = loadConfig();
+    assert.equal(config.defaultProvider, 'albert');
+    assert.equal(config.providers.albert.apiKey, 'sk-old');
+    assert.equal(config.providers.albert.model, 'OldModel');
+
+    // Migration was written back to disk
+    const written = JSON.parse(fs.readFileSync(path.join(dir, 'config.json'), 'utf-8'));
+    assert.ok(written.providers, 'migrated config should have providers on disk');
+    assert.ok(!written.apiKey, 'old apiKey field should be gone');
+  });
+
+  it('loads new multi-provider config without touching it', () => {
+    const config = {
+      defaultProvider: 'ilaas',
+      providers: {
+        ilaas: { baseUrl: 'https://llm.ilaas.fr/v1', apiKey: 'sk-ilaas', model: 'ILaaS-Model' },
+      },
+      braveApiKey: '',
+    };
+    saveConfig(config);
+    const loaded = loadConfig();
+    assert.deepEqual(loaded, config);
+  });
+});
