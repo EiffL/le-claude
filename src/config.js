@@ -10,6 +10,27 @@ import readline from 'node:readline';
 
 const DEFAULT_BASE_URL = 'https://albert.api.etalab.gouv.fr/v1';
 
+const PROVIDER_BASE_URLS = {
+  albert: 'https://albert.api.etalab.gouv.fr/v1',
+  ilaas: 'https://llm.ilaas.fr/v1',
+};
+
+/** Migrate old flat config to multi-provider shape. Returns same ref if already new shape. */
+export function migrateConfig(config) {
+  if (!config || config.providers) return config;
+  return {
+    defaultProvider: 'albert',
+    providers: {
+      albert: {
+        baseUrl: config.baseUrl || PROVIDER_BASE_URLS.albert,
+        apiKey: config.apiKey,
+        model: config.model,
+      },
+    },
+    braveApiKey: config.braveApiKey || '',
+  };
+}
+
 function configDir() {
   const xdg = process.env.XDG_CONFIG_HOME || path.join(process.env.HOME, '.config');
   return path.join(xdg, 'le-claude');
